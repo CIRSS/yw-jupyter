@@ -4,8 +4,9 @@ import NodeHeaderDemoNode from './cell-node';
 
 import React from 'react';
 
-import '../style/index.css';
 import {Background, ReactFlow} from "@xyflow/react";
+
+import "@xyflow/react/dist/style.css";
 
 const nodeTypes = {
   nodeHeaderNode: NodeHeaderDemoNode,
