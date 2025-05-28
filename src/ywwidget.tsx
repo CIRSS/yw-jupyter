@@ -1,5 +1,7 @@
 import { ReactWidget } from '@jupyterlab/ui-components';
 
+import { Button } from './components/ui/button';
+
 import React, { useState } from 'react';
 
 import '../style/index.css';
@@ -19,19 +21,20 @@ const CounterComponent = ({
   const [counter, setCounter] = useState(0);
 
   return (
-      <div className="bg-sky-950">
+      <div>
           <h1 className="text-3xl font-bold underline">
               Hello world!
           </h1>
           <p>You clicked {counter} times!</p>
           <p>Notebook ID: {notebookID}</p>
-          <button
+          <Button
               onClick={(): void => {
                   setCounter(counter + 1);
               }}
+              variant="outline"
           >
               Increment
-          </button>
+          </Button>
       </div>
   );
 };
