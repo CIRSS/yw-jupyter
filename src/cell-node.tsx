@@ -7,40 +7,37 @@ import {
   NodeHeader,
   NodeHeaderTitle,
   NodeHeaderActions,
-  NodeHeaderMenuAction,
-  NodeHeaderIcon,
+  NodeHeaderDiveInAction,
+  NodeHeaderRunAction,
   NodeHeaderDeleteAction
 } from './components/node-header';
-import {
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator
-} from './components/ui/dropdown-menu';
-import { Rocket } from 'lucide-react';
+import CodeEditor from '@uiw/react-textarea-code-editor';
 
-const NodeHeaderDemo = memo(({ selected }: NodeProps) => {
+const CellNode = memo(({ selected }: NodeProps) => {
   return (
     <BaseNode selected={selected} className="px-3 py-2">
       <NodeHeader className="-mx-3 -mt-2 border-b">
-        <NodeHeaderIcon>
-          <Rocket />
-        </NodeHeaderIcon>
-        <NodeHeaderTitle>Node Title</NodeHeaderTitle>
+        <NodeHeaderTitle>Cell [ ]</NodeHeaderTitle>
         <NodeHeaderActions>
-          <NodeHeaderMenuAction label="Expand account options">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
-          </NodeHeaderMenuAction>
+          <NodeHeaderDiveInAction />
+          <NodeHeaderRunAction />
           <NodeHeaderDeleteAction />
         </NodeHeaderActions>
       </NodeHeader>
-      <div className="mt-2">Node Content</div>
+      <div className="mt-2">
+        <CodeEditor
+          value="import sys"
+          language="python"
+          data-color-mode="light"
+          style={{
+            backgroundColor: '#f5f5f5',
+            fontFamily:
+              'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace'
+          }}
+        />
+      </div>
     </BaseNode>
   );
 });
 
-export default NodeHeaderDemo;
+export default CellNode;

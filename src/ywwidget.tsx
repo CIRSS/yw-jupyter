@@ -1,6 +1,6 @@
 import { ReactWidget } from '@jupyterlab/ui-components';
 
-import NodeHeaderDemoNode from './cell-node';
+import CellNode from './cell-node';
 
 import React from 'react';
 
@@ -15,13 +15,13 @@ import {
 import '@xyflow/react/dist/style.css';
 
 const nodeTypes = {
-  nodeHeaderNode: NodeHeaderDemoNode
+  cell: CellNode
 };
 
 const defaultNodes = [
   {
     id: '1',
-    type: 'nodeHeaderNode',
+    type: 'cell',
     position: { x: 200, y: 200 },
     data: {}
   }

@@ -4,8 +4,8 @@ import React, {
   HTMLAttributes,
   ReactNode
 } from 'react';
-import { useNodeId, useReactFlow } from '@xyflow/react';
-import { EllipsisVertical, Trash } from 'lucide-react';
+import { useNodeId, useNodes, useReactFlow } from '@xyflow/react';
+import { EllipsisVertical, Play, SquareArrowDown, Trash } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Slot } from '@radix-ui/react-slot';
 import { Button, ButtonProps } from './ui/button';
@@ -195,3 +195,35 @@ export const NodeHeaderDeleteAction = () => {
 };
 
 NodeHeaderDeleteAction.displayName = 'NodeHeaderDeleteAction';
+
+/* NODE HEADER DIVE IN ACTION -------------------------------------- */
+
+export const NodeHeaderDiveInAction = () => {
+  const id = useNodeId();
+
+  const handleClick = () => {
+    console.log('Dive in to node', id);
+  };
+
+  return (
+    <NodeHeaderAction onClick={handleClick} label="Dive in to node">
+      <SquareArrowDown />
+    </NodeHeaderAction>
+  );
+};
+
+/* NODE HEADER RUN ACTION -------------------------------------- */
+
+export const NodeHeaderRunAction = () => {
+  const node = useNodes();
+
+  const handleClick = () => {
+    console.log('Run to node', node);
+  };
+
+  return (
+    <NodeHeaderAction onClick={handleClick} label="Dive in to node">
+      <Play />
+    </NodeHeaderAction>
+  );
+};

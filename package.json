@@ -62,6 +62,7 @@
         "@radix-ui/react-dropdown-menu": "^2.1.15",
         "@radix-ui/react-slot": "^1.2.3",
         "@tailwindcss/cli": "^4.1.7",
+        "@uiw/react-textarea-code-editor": "^3.1.1",
         "@xyflow/react": "^12.6.4",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
