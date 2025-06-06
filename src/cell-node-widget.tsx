@@ -15,7 +15,7 @@ import { Node, NodeProps } from '@xyflow/react';
 export interface CellNodeData extends Record<string, unknown> {
   exec_count: number;
   header: string;
-  code_block: string;
+  code_block: string | string[];
   status: 'not-execute' | 'executing' | 'executed';
 }
 

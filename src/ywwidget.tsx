@@ -43,40 +43,35 @@ function App({ defaultNodes }: AppProps): JSX.Element {
  */
 export class YWWidget extends ReactWidget {
   readonly notebookID: string;
-  readonly notebook: NotebookPanel;
-  defaultNodes: CellNode[];
+  readonly notebook: NotebookPanel; // cannot be null
+  defaultNodes: CellNode[] = [];
 
   constructor(notebook: NotebookPanel) {
     super();
     this.addClass('jp-react-widget');
     this.notebook = notebook;
     this.notebookID = notebook.id;
-
-    // initialize default nodes
-    // TODO: call
-    //  const cells = this.notebook.content.widgets.filter(cell => {
-    //       return cell.model.type === 'code';
-    //     });
-    //
-    //     console.log('YWWidget observes notebook and calls updateView: ');
-    //     cells.forEach(cell => {
-    //       console.log(cell.model.toJSON());
-    //     });
     console.log('Constructing YWWidget with notebookID: ', this.notebookID);
     console.log('Constructing YWWidget with notebook: ', this.notebook);
-    this.defaultNodes = [
-      {
-        id: '1',
+
+    // initialize default nodes
+    const cells = this.notebook.content.widgets.filter(cell => {
+      return cell.model.type === 'code';
+    });
+    cells.forEach((cell, index) => {
+      let cellMeta = cell.model.toJSON();
+      this.defaultNodes.push({
+        id: `${index}`,
         type: 'cell',
         position: { x: 0, y: 0 },
         data: {
           exec_count: 0,
-          header: 'Cell 1',
-          code_block: 'print("Hello, World!")',
+          header: `Cell ${index}`,
+          code_block: cellMeta.source,
           status: 'not-execute'
         }
-      }
-    ];
+      });
+    });
   }
 
   render(): JSX.Element {
