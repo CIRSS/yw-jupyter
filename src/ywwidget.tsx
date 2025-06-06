@@ -5,6 +5,7 @@ import CellNode from './cell-node';
 import React from 'react';
 
 import {
+  Node,
   Background,
   Controls,
   MiniMap,
@@ -14,20 +15,25 @@ import {
 
 import '@xyflow/react/dist/style.css';
 
+interface CellNodeData extends Record<string, unknown> {
+  exec_count: number;
+  header: string;
+  code_block: string;
+  status: 'not-execute' | 'executing' | 'executed';
+}
+
+export type CellNodeProp = Node<CellNodeData>;
+
 const nodeTypes = {
   cell: CellNode
 };
 
-const defaultNodes = [
-  {
-    id: '1',
-    type: 'cell',
-    position: { x: 200, y: 200 },
-    data: {}
-  }
-];
+interface AppProps {
+  defaultNodes: CellNodeProp[];
+}
 
-function App() {
+function App({ defaultNodes }: AppProps): JSX.Element {
+  console.log('defaultNodes: ', defaultNodes);
   return (
     <ReactFlowProvider>
       <ReactFlow defaultNodes={defaultNodes} nodeTypes={nodeTypes} fitView>
@@ -44,14 +50,30 @@ function App() {
  */
 export class YWWidget extends ReactWidget {
   readonly notebookID: string;
+  defaultNodes: CellNodeProp[];
 
   constructor(notebookID: string) {
     super();
     this.addClass('jp-react-widget');
     this.notebookID = notebookID;
+
+    // initialize default nodes
+    this.defaultNodes = [
+      {
+        id: '1',
+        type: 'cell',
+        position: { x: 200, y: 200 },
+        data: {
+          exec_count: 0,
+          header: 'Cell 1',
+          code_block: 'print("Hello, World!")',
+          status: 'not-execute'
+        }
+      }
+    ];
   }
 
   render(): JSX.Element {
-    return <App />;
+    return <App defaultNodes={this.defaultNodes} />;
   }
 }
