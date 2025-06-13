@@ -5,11 +5,13 @@ import { CellNodeWidget } from './cell-node-widget';
 import React from 'react';
 
 import { CellNode } from './cell-node-widget';
+import { ToolBar } from './tool-bar';
 
 import {
   Background,
   Controls,
   MiniMap,
+  Panel,
   ReactFlow,
   ReactFlowProvider
 } from '@xyflow/react';
@@ -30,6 +32,9 @@ function App({ defaultNodes }: AppProps): JSX.Element {
   return (
     <ReactFlowProvider>
       <ReactFlow defaultNodes={defaultNodes} nodeTypes={nodeTypes} fitView>
+        <Panel>
+          <ToolBar />
+        </Panel>
         <MiniMap pannable zoomable />
         <Controls />
         <Background />
