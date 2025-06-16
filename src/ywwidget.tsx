@@ -1,10 +1,10 @@
-import {ReactWidget} from '@jupyterlab/ui-components';
+import { ReactWidget } from '@jupyterlab/ui-components';
 
-import {CellNode, CellNodeWidget} from './cell-node-widget';
+import { CellNode, CellNodeWidget } from './cell-node-widget';
 
-import React, {useCallback} from 'react';
-import {ToolBar} from './tool-bar';
-import {getLayoutedElements} from './layout';
+import React, { useCallback } from 'react';
+import { ToolBar } from './tool-bar';
+import { getLayoutedElements } from './layout';
 
 import {
   Background,
@@ -20,7 +20,7 @@ import {
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
-import {NotebookPanel} from '@jupyterlab/notebook';
+import { NotebookPanel } from '@jupyterlab/notebook';
 
 const nodeTypes = {
   cell: CellNodeWidget
@@ -111,8 +111,8 @@ export class YWWidget extends ReactWidget {
           id: `e${index - 1}-${index}`,
           source: `${index - 1}`,
           target: `${index}`,
-          markerEnd: {type: MarkerType.ArrowClosed}
-        })
+          markerEnd: { type: MarkerType.ArrowClosed }
+        });
       }
     });
   }
