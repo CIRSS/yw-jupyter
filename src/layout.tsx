@@ -1,6 +1,6 @@
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { CellNode } from './cell-node-widget';
-import { Edge } from '@xyflow/react';
+import { Edge, MarkerType } from '@xyflow/react';
 
 const elk = new ELK();
 
@@ -11,6 +11,15 @@ const elkOptions = {
   'elk.spacing.nodeNode': '80'
 };
 
+/**
+ * Get the layouted elements using ELK.
+ * This function takes CellNode and Edge arrays used in React Flow and returns
+ * the layouted CellNode and Edge arrays passed in with the `position` changed.
+ * @todo currently, I'm mapping the nodes/edges to the format ELK back-and-forth
+ *       by hand.
+ * @param nodes
+ * @param edges
+ */
 export const getLayoutedElements = (nodes: CellNode[], edges: Edge[]) => {
   const graph = {
     id: 'root',
@@ -23,8 +32,8 @@ export const getLayoutedElements = (nodes: CellNode[], edges: Edge[]) => {
       sourcePosition: 'bottom',
 
       // Hardcode a width and height for elk to use when layouting.
-      width: 150,
-      height: 50
+      width: node.width || 200,
+      height: node.height || 50
     })),
     edges: edges.map((edge: Edge) => ({
       id: edge.id,
@@ -45,7 +54,10 @@ export const getLayoutedElements = (nodes: CellNode[], edges: Edge[]) => {
       edges: layoutedGraph.edges.map(edge => ({
         id: edge.id,
         source: edge.sources[0],
-        target: edge.targets[0]
+        target: edge.targets[0],
+        markerEnd: {
+          type: MarkerType.ArrowClosed
+        }
       }))
     }))
     .catch(console.error);
