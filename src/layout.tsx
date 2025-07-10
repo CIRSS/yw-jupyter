@@ -7,7 +7,7 @@ const elk = new ELK();
 const elkOptions = {
   'elk.algorithm': 'layered',
   'elk.direction': 'DOWN',
-  'elk.layered.spacing.nodeNodeBetweenLayers': '100',
+  'elk.layered.spacing.nodeNodeBetweenLayers': '120',
   'elk.spacing.nodeNode': '80'
 };
 
@@ -55,6 +55,7 @@ export const getLayoutedElements = (nodes: CellNode[], edges: Edge[]) => {
         id: edge.id,
         source: edge.sources[0],
         target: edge.targets[0],
+        type: 'smoothstep',
         markerEnd: {
           type: MarkerType.ArrowClosed
         }

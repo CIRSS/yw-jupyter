@@ -21,6 +21,7 @@ import {
 
 import '@xyflow/react/dist/style.css';
 import { NotebookPanel } from '@jupyterlab/notebook';
+import {computeEdges} from "./yw-core";
 
 const nodeTypes = {
   cell: CellNodeWidget
@@ -87,10 +88,11 @@ export class YWWidget extends ReactWidget {
     console.log('Constructing YWWidget with notebookID: ', this.notebookID);
     console.log('Constructing YWWidget with notebook: ', this.notebook);
 
-    // initialize default nodes
+    // initialize default nodes and prepare it to list for yw-core
     const cells = this.notebook.content.widgets.filter(cell => {
       return cell.model.type === 'code';
     });
+    const ywCoreCodeCellList: string[] = [];
     cells.forEach((cell, index) => {
       let cellMeta = cell.model.toJSON();
       this.defaultNodes.push({
@@ -105,16 +107,28 @@ export class YWWidget extends ReactWidget {
         }
       });
 
-      // TODO: compute the edges through yw-generator
-      if (index > 0) {
+      // join string array to string and append it to list
+      if (typeof cellMeta.source === 'string') {
+        ywCoreCodeCellList.push(cellMeta.source);
+      } else {
+        ywCoreCodeCellList.push(cellMeta.source.join('\n'));
+      }
+    });
+
+    // compute the edges using yw-core
+    // TODO: without edges the layout is probably not correct.
+    const edges = computeEdges(ywCoreCodeCellList);
+    edges.forEach(
+      (edge) => {
         this.defaultEdges.push({
-          id: `e${index - 1}-${index}`,
-          source: `${index - 1}`,
-          target: `${index}`,
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          type: 'smoothstep',
           markerEnd: { type: MarkerType.ArrowClosed }
         });
       }
-    });
+    )
   }
 
   render(): JSX.Element {
