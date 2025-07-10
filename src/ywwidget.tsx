@@ -21,7 +21,7 @@ import {
 
 import '@xyflow/react/dist/style.css';
 import { NotebookPanel } from '@jupyterlab/notebook';
-import {computeEdges} from "./yw-core";
+import { computeEdges } from './yw-core';
 
 const nodeTypes = {
   cell: CellNodeWidget
@@ -117,18 +117,19 @@ export class YWWidget extends ReactWidget {
 
     // compute the edges using yw-core
     // TODO: without edges the layout is probably not correct.
-    const edges = computeEdges(ywCoreCodeCellList);
-    edges.forEach(
-      (edge) => {
-        this.defaultEdges.push({
-          id: edge.id,
-          source: edge.source,
-          target: edge.target,
-          type: 'smoothstep',
-          markerEnd: { type: MarkerType.ArrowClosed }
-        });
-      }
-    )
+    const edges = computeEdges(
+      this.notebook.sessionContext.session?.kernel,
+      ywCoreCodeCellList
+    );
+    edges.forEach(edge => {
+      this.defaultEdges.push({
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+        type: 'smoothstep',
+        markerEnd: { type: MarkerType.ArrowClosed }
+      });
+    });
   }
 
   render(): JSX.Element {
