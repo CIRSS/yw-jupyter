@@ -32,8 +32,8 @@ export const getLayoutedElements = (nodes: CellNode[], edges: Edge[]) => {
       sourcePosition: 'bottom',
 
       // Hardcode a width and height for elk to use when layouting.
-      width: node.width || 200,
-      height: node.height || 50
+      width: node.measured?.width || 200,
+      height: node.measured?.height || 50
     })),
     edges: edges.map((edge: Edge) => ({
       id: edge.id,
