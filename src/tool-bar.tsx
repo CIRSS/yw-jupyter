@@ -7,7 +7,10 @@ export interface ToolBarProps {
   onClickDebug?: () => void;
 }
 
-export function ToolBar({ onClickLayout, onClickDebug }: ToolBarProps): JSX.Element {
+export function ToolBar({
+  onClickLayout,
+  onClickDebug
+}: ToolBarProps): JSX.Element {
   return (
     <div className="flex flex-wrap items-center gap-2 md:flex-row">
       <div>

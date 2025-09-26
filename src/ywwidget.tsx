@@ -48,7 +48,7 @@ function App({ defaultNodes, defaultEdges }: AppProps): JSX.Element {
   const onDebug = () => {
     console.log('[Debug] Nodes: ', nodes);
     console.log('[Debug] Edges: ', edges);
-  }
+  };
 
   // TODO: Calculate the initial layout on mount.
 
