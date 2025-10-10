@@ -97,14 +97,15 @@ export async function computeEdges(
       silent: false,
       store_history: false
   });
-  let output: string | string[] | null | undefined = null;
+  let output_raw: string | string[] | null | undefined = null;
+
   exec_result.onIOPub = (msg: KernelMessage.IIOPubMessage) => {
     if (msg.header.msg_type === 'stream') {
       const content = msg.content as IStream;
-      output = content.text;
+      output_raw = content.text;
 
       // parse the output and return
-      parseYWCoreOutput(output);
+      parseYWCoreOutput(output_raw);
     }
   };
 
