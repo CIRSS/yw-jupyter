@@ -139,9 +139,7 @@ export async function computeEdges(
 function parseYWCoreOutput(
   output_raw: string | string[] | null | undefined
 ): YWEdge[] {
-  console.log('parseYWCoreOutput: ', output_raw);
-  console.log('parseYWCoreOutput type: ', typeof output_raw);
-  if (!output_raw) {
+  if (output_raw) {
     let output: string | null | undefined;
     if (Array.isArray(output_raw)) {
       output = output_raw.join(" ");
@@ -151,8 +149,11 @@ function parseYWCoreOutput(
     output = output?.replace(/'/g, '"');
     if (typeof output === 'string') {
       const json_output = JSON.parse(output);
-      console.log(json_output);
-      return []; // TODO: convert json_output to YWEdge[]
+      let edges: YWEdge[] = [];
+      json_output.forEach((edge: YWEdge) => {
+        edges.push({ id: `e${edge.source}-${edge.target}`, source: `${edge.source}`, target: `${edge.target}` });
+      });
+      return edges;
     } else {
       return [];
     }
