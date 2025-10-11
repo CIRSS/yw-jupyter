@@ -68,22 +68,22 @@ export async function computeEdges(
     return [];
   }
 
-  // load input cells to Python, and create cell_list = [list of cell_i]
+  // Load input cells to Python
   let py_cell_list = '';
-  input_cells.forEach((cell, index) => {
-    const py_cell = `cell_${index} = """${cell}"""\n`; // TODO: might encounter issues if triple quotes are in the code
+  for (let index = 0; index < input_cells.length; index++) {
+    const py_cell = `cell_${index} = """${input_cells[index]}"""\n`;
     py_cell_list += `cell_${index},`;
-    kernel.requestExecute({
+    await kernel.requestExecute({
       code: py_cell,
       silent: false,
       store_history: false
-    });
-  });
-  kernel.requestExecute({
+    }).done;
+  }
+  await kernel.requestExecute({
     code: 'cell_list = [' + py_cell_list + ']\n',
     silent: false,
     store_history: false
-  });
+  }).done;
 
   // call yw-core to compute edges silently
   const is_upper_estimate = yw_core_estimate === 'Upper' ? 'True' : 'False';
@@ -92,44 +92,43 @@ export async function computeEdges(
     `${py_parse_yw_core}\n` +
     `yw_records = extract_records(cell_list, is_upper_estimate=${is_upper_estimate})\n` +
     `print(parse_yw_core(yw_records))\n`;
-  const exec_result = kernel.requestExecute({
+
+  return new Promise<YWEdge[]>((resolve) => {
+    const exec_result = kernel.requestExecute({
       code: py_yw_core,
       silent: false,
       store_history: false
-  });
-  let output_raw: string | string[] | null | undefined = null;
+    });
 
-  exec_result.onIOPub = (msg: KernelMessage.IIOPubMessage) => {
-    if (msg.header.msg_type === 'stream') {
-      const content = msg.content as IStream;
-      output_raw = content.text;
+    let output_raw: string | string[] | null | undefined = null;
+    exec_result.onIOPub = (msg: KernelMessage.IIOPubMessage) => {
+      if (msg.header.msg_type === 'stream') {
+        const content = msg.content as IStream;
+        output_raw = content.text;
+        resolve(parseYWCoreOutput(output_raw));
+      }
+    };
 
-      // parse the output and return
-      parseYWCoreOutput(output_raw);
-    }
-  };
-
-  // clear the Python object (currently, python objects are hardcoded to cell_i and cell_list)
-  // TODO: can I make this prettier?
-  input_cells.forEach((cell, index) => {
+    // clear the Python object (currently, python objects are hardcoded to cell_i and cell_list)
+    // TODO: can I make this prettier?
+    input_cells.forEach((cell, index) => {
+      kernel.requestExecute({
+        code: `del(cell_${index})`,
+        silent: false,
+        store_history: false
+      });
+    });
     kernel.requestExecute({
-      code: `del(cell_${index})`,
+      code: 'del(cell_list)\n',
+      silent: false,
+      store_history: false
+    });
+    kernel.requestExecute({
+      code: 'del(extract_records);del(parse_yw_core)\n',
       silent: false,
       store_history: false
     });
   });
-  kernel.requestExecute({
-    code: 'del(cell_list)\n',
-    silent: false,
-    store_history: false
-  });
-  kernel.requestExecute({
-    code: 'del(extract_records);del(parse_yw_core)\n',
-    silent: false,
-    store_history: false
-  });
-
-  return [{ id: 'e0-1', source: '0', target: '1' }];
 }
 
 /**
