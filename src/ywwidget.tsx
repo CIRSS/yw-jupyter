@@ -33,11 +33,12 @@ interface AppProps {
 
 function App({ ywwidget }: AppProps): JSX.Element {
   const [nodes, setNodes, onNodesChange] = useNodesState(ywwidget.defaultNodes);
-  const [edges, setEdges, _] = useEdgesState([]);
+  const [edges, setEdges] = useEdgesState<Edge>([]);
 
   // Update edges when ywwidget.Edges changes
   useEffect(() => {
     console.log('[App] useEffect triggered by ywwidget.Edges change');
+    setEdges(ywwidget.Edges);
   }, [ywwidget.Edges]);
 
   // Layout button handler
