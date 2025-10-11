@@ -2,7 +2,7 @@ import { ReactWidget } from '@jupyterlab/ui-components';
 
 import { CellNode, CellNodeWidget } from './cell-node-widget';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { ToolBar } from './tool-bar';
 import { getLayoutedElements } from './layout';
 
@@ -28,15 +28,20 @@ const nodeTypes = {
 };
 
 interface AppProps {
-  defaultNodes: CellNode[];
-  defaultEdges: Edge[];
+  ywwidget: YWWidget;
 }
 
-function App({ defaultNodes, defaultEdges }: AppProps): JSX.Element {
-  const [nodes, setNodes, onNodesChange] = useNodesState(defaultNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(defaultEdges);
+function App({ ywwidget }: AppProps): JSX.Element {
+  const [nodes, setNodes, onNodesChange] = useNodesState(ywwidget.defaultNodes);
+  const [edges, setEdges, _] = useEdgesState([]);
 
-  const onLayout = useCallback(() => {
+  // Update edges when ywwidget.Edges changes
+  useEffect(() => {
+    console.log("[App] useEffect triggered by ywwidget.Edges change");
+  }, [ywwidget.Edges]);
+
+  // Layout button handler
+  const onLayoutButton = useCallback(() => {
     getLayoutedElements(nodes, edges).then(obj => {
       setNodes(obj['nodes']);
       setEdges(obj['edges']);
@@ -45,7 +50,8 @@ function App({ defaultNodes, defaultEdges }: AppProps): JSX.Element {
     });
   }, [nodes, edges]);
 
-  const onDebug = () => {
+  // Debug button handler
+  const onDebugButton = () => {
     console.log('[Debug] Nodes: ', nodes);
     console.log('[Debug] Edges: ', edges);
   };
@@ -58,15 +64,13 @@ function App({ defaultNodes, defaultEdges }: AppProps): JSX.Element {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        defaultNodes={defaultNodes}
-        defaultEdges={defaultEdges}
+        defaultNodes={ywwidget.defaultNodes}
         nodeTypes={nodeTypes}
         fitView
         onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
       >
         <Panel>
-          <ToolBar onClickLayout={onLayout} onClickDebug={onDebug} />
+          <ToolBar onClickLayout={onLayoutButton} onClickDebug={onDebugButton} />
         </Panel>
         <MiniMap pannable zoomable />
         <Controls />
@@ -83,7 +87,7 @@ export class YWWidget extends ReactWidget {
   readonly notebookID: string;
   readonly notebook: NotebookPanel; // cannot be null
   defaultNodes: CellNode[] = [];
-  defaultEdges: Edge[] = [];
+  Edges: Edge[] = [];
 
   constructor(notebook: NotebookPanel) {
     super();
@@ -121,14 +125,13 @@ export class YWWidget extends ReactWidget {
     });
 
     // compute the edges using yw-core
-    // TODO: without edges the layout is probably not correct.
     computeEdges(
       this.notebook.sessionContext.session?.kernel,
       ywCoreCodeCellList
     ).then((edges) => {
-      console.log('Computed edges: ', edges);
+      console.log('[YWWidget] Computed edges: ', edges);
       edges.forEach(edge => {
-        this.defaultEdges.push({
+        this.Edges.push({
           id: edge.id,
           source: edge.source,
           target: edge.target,
@@ -137,11 +140,13 @@ export class YWWidget extends ReactWidget {
         });
       });
     });
+    console.log("[YWWidget] end of constructor");
   }
 
   render(): JSX.Element {
+    console.log("[YWWidget] render()");
     return (
-      <App defaultNodes={this.defaultNodes} defaultEdges={this.defaultEdges} />
+      <App ywwidget={this} />
     );
   }
 }
