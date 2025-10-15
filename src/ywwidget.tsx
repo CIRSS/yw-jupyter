@@ -35,6 +35,12 @@ function App({ ywwidget }: AppProps): JSX.Element {
   const [nodes, setNodes, onNodesChange] = useNodesState(ywwidget.defaultNodes);
   const [edges, setEdges] = useEdgesState<Edge>([]);
 
+  // On node double click handler
+  const onNodeDoubleClick = (event: React.MouseEvent, node: CellNode) => {
+    console.log("[App] Node double-clicked: ", node);
+    ywwidget.focusCell(Number(node.id));
+  };
+
   // Update edges when ywwidget.Edges changes
   useEffect(() => {
     console.log('[App] useEffect triggered by ywwidget.Edges change');
@@ -69,6 +75,7 @@ function App({ ywwidget }: AppProps): JSX.Element {
         nodeTypes={nodeTypes}
         fitView
         onNodesChange={onNodesChange}
+        onNodeDoubleClick={onNodeDoubleClick}
       >
         <Panel>
           <ToolBar
@@ -145,6 +152,11 @@ export class YWWidget extends ReactWidget {
       });
     });
     console.log('[YWWidget] end of constructor');
+  }
+
+  focusCell(cellIndex: number) {
+    this.notebook.content.activeCellIndex = cellIndex;
+    console.log('[YWWidget] focusCell: ', cellIndex);
   }
 
   render(): JSX.Element {
