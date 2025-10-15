@@ -38,7 +38,7 @@ function App({ ywwidget }: AppProps): JSX.Element {
   // On node double click handler
   const onNodeDoubleClick = (event: React.MouseEvent, node: CellNode) => {
     console.log("[App] Node double-clicked: ", node);
-    ywwidget.focusCell(Number(node.id));
+    ywwidget.focusCell(node.data.order_index);
   };
 
   // Update edges when ywwidget.Edges changes
@@ -109,29 +109,33 @@ export class YWWidget extends ReactWidget {
     console.log('Constructing YWWidget with notebook: ', this.notebook);
 
     // initialize default nodes and prepare it to list for yw-core
-    const cells = this.notebook.content.widgets.filter(cell => {
-      return cell.model.type === 'code';
-    });
     const ywCoreCodeCellList: string[] = [];
-    cells.forEach((cell, index) => {
-      let cellMeta = cell.model.toJSON();
-      this.defaultNodes.push({
-        id: `${index}`,
-        type: 'cell',
-        position: { x: 0, y: 0 },
-        data: {
-          exec_count: 0,
-          header: `Cell ${index}`,
-          code_block: cellMeta.source,
-          status: 'not-execute'
-        }
-      });
-
-      // join string array to string and append it to list
-      if (typeof cellMeta.source === 'string') {
-        ywCoreCodeCellList.push(cellMeta.source);
+    let codeCellIndex = 0;
+    this.notebook.content.widgets.forEach((cell, index) => {
+      if (cell.model.type !== 'code') {
+        return;
       } else {
-        ywCoreCodeCellList.push(cellMeta.source.join('\n'));
+        let cellMeta = cell.model.toJSON();
+        this.defaultNodes.push({
+          id: `${codeCellIndex}`,
+          type: 'cell',
+          position: { x: 0, y: 0 },
+          data: {
+            order_index: index,
+            exec_count: 0,
+            header: `Cell ${index}`,
+            code_block: cellMeta.source,
+            status: 'not-execute'
+          }
+        });
+        codeCellIndex += 1;
+
+        // join string array to string and append it to list
+        if (typeof cellMeta.source === 'string') {
+          ywCoreCodeCellList.push(cellMeta.source);
+        } else {
+          ywCoreCodeCellList.push(cellMeta.source.join('\n'));
+        }
       }
     });
 

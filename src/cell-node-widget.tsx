@@ -13,6 +13,7 @@ import CodeEditor from '@uiw/react-textarea-code-editor';
 import { Handle, Node, NodeProps, Position } from '@xyflow/react';
 
 export interface CellNodeData extends Record<string, unknown> {
+  order_index: number;
   exec_count: number;
   header: string;
   code_block: string | string[];
