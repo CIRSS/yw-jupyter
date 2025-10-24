@@ -100,8 +100,7 @@ function App({ ywwidget }: AppProps): JSX.Element {
 
   // defaultNodes only used for initial rendering
   return (
-    <ReactFlowProvider>
-      <ReactFlow
+    <ReactFlow
         nodes={nodes}
         edges={edges}
         defaultNodes={ywwidget.defaultNodes}
@@ -120,6 +119,14 @@ function App({ ywwidget }: AppProps): JSX.Element {
         <Controls />
         <Background />
       </ReactFlow>
+  );
+}
+
+function AppWrapper({ ywwidget }: AppProps): JSX.Element {
+
+  return (
+    <ReactFlowProvider>
+      <App ywwidget={ywwidget} />
     </ReactFlowProvider>
   );
 }
@@ -209,6 +216,6 @@ export class YWWidget extends ReactWidget {
 
   render(): JSX.Element {
     console.log('[YWWidget] render()');
-    return <App ywwidget={this} />;
+    return <AppWrapper ywwidget={this} />;
   }
 }
