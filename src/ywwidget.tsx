@@ -163,7 +163,7 @@ export class YWWidget extends ReactWidget {
           data: {
             order_index: index,
             exec_count: 0,
-            header: `Cell ${index}`,
+            header: `Cell ${index + 1}`,
             code_block: cellMeta.source,
             status: 'not-execute'
           }
@@ -190,7 +190,7 @@ export class YWWidget extends ReactWidget {
           id: edge.id,
           source: edge.source,
           target: edge.target,
-          type: 'smoothstep',
+          type: 'bezier',
           markerEnd: { type: MarkerType.ArrowClosed }
         });
       });

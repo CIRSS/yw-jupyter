@@ -57,7 +57,7 @@ def parse_yw_core(yw_records: list):
 export async function computeEdges(
   kernel: Kernel.IKernelConnection | undefined | null,
   input_cells: string[],
-  yw_core_estimate: 'Upper' | 'Lower' = 'Upper'
+  yw_core_estimate: 'Upper' | 'Lower' = 'Lower'
 ): Promise<YWEdge[]> {
   if (!kernel) {
     Notification.error(
@@ -105,6 +105,7 @@ export async function computeEdges(
       if (msg.header.msg_type === 'stream') {
         const content = msg.content as IStream;
         output_raw = content.text;
+        console.log('[yw-core] output: ', output_raw);
         resolve(parseYWCoreOutput(output_raw));
       }
     };
