@@ -149,12 +149,19 @@ export class YWWidget extends ReactWidget {
     console.log('Constructing YWWidget with notebook: ', this.notebook);
 
     // initialize default nodes and prepare it to list for yw-core
+    // and register to listen to code cell content changes
     const ywCoreCodeCellList: string[] = [];
     let codeCellIndex = 0;
     this.notebook.content.widgets.forEach((cell, index) => {
       if (cell.model.type !== 'code') {
         return;
       } else {
+        // register content changed listener
+        cell.model.contentChanged.connect(() => {
+          this.onCodeCellContentChanged(index);
+        }, this);
+
+        // prepare code cell for yw-core
         let cellMeta = cell.model.toJSON();
         this.defaultNodes.push({
           id: `${codeCellIndex}`,
@@ -196,6 +203,16 @@ export class YWWidget extends ReactWidget {
       });
     });
     console.log('[YWWidget] end of constructor');
+  }
+
+  onCodeCellContentChanged(cellIndex: number) {
+    const cells = this.notebook.content.widgets.filter(cell => {
+      return cell.model.type === 'code';
+    });
+    console.log(
+      `[YWWidget] cell ${cellIndex}`,
+      cells[cellIndex].model.toJSON()
+    );
   }
 
   focusCell(cellIndex: number) {
