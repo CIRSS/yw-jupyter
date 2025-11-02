@@ -21,7 +21,7 @@ import {
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
-import {NotebookActions, NotebookPanel } from '@jupyterlab/notebook';
+import { NotebookActions, NotebookPanel } from '@jupyterlab/notebook';
 import { computeEdges } from './yw-core';
 
 const nodeTypes = {
@@ -41,11 +41,11 @@ const reactflowController: ReactFlowControllerType = {};
 function App({ ywwidget }: AppProps): JSX.Element {
   const [nodes, setNodes, onNodesChange] = useNodesState(ywwidget.defaultNodes);
   const [edges, setEdges] = useEdgesState<Edge>([]);
-  const {getNode, setCenter} = useReactFlow();
+  const { getNode, setCenter } = useReactFlow();
 
   // On node double click handler
   const onNodeDoubleClick = (event: React.MouseEvent, node: CellNode) => {
-    console.log("[App] Node double-clicked: ", node);
+    console.log('[App] Node double-clicked: ', node);
     ywwidget.focusCell(node.data.order_index);
   };
 
@@ -80,11 +80,11 @@ function App({ ywwidget }: AppProps): JSX.Element {
         setCenter(
           node.position.x + (node.measured?.width || 0) / 2,
           node.position.y + (node.measured?.height || 0) / 2,
-          {zoom: zoom, duration: 800},
+          { zoom: zoom, duration: 800 }
         );
         // setNodes((nodes) => nodes.map((n) => {...n}))
       } else {
-        return
+        return;
       }
     },
     [getNode, setCenter, setNodes]
@@ -93,7 +93,7 @@ function App({ ywwidget }: AppProps): JSX.Element {
     reactflowController.focusAndSelectNode = focusAndSelectNode;
     return () => {
       delete reactflowController.focusAndSelectNode;
-    }
+    };
   }, []);
 
   // TODO: Calculate the initial layout on mount.
@@ -101,29 +101,25 @@ function App({ ywwidget }: AppProps): JSX.Element {
   // defaultNodes only used for initial rendering
   return (
     <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        defaultNodes={ywwidget.defaultNodes}
-        nodeTypes={nodeTypes}
-        fitView
-        onNodesChange={onNodesChange}
-        onNodeDoubleClick={onNodeDoubleClick}
-      >
-        <Panel>
-          <ToolBar
-            onClickLayout={onLayoutButton}
-            onClickDebug={onDebugButton}
-          />
-        </Panel>
-        <MiniMap pannable zoomable />
-        <Controls />
-        <Background />
-      </ReactFlow>
+      nodes={nodes}
+      edges={edges}
+      defaultNodes={ywwidget.defaultNodes}
+      nodeTypes={nodeTypes}
+      fitView
+      onNodesChange={onNodesChange}
+      onNodeDoubleClick={onNodeDoubleClick}
+    >
+      <Panel>
+        <ToolBar onClickLayout={onLayoutButton} onClickDebug={onDebugButton} />
+      </Panel>
+      <MiniMap pannable zoomable />
+      <Controls />
+      <Background />
+    </ReactFlow>
   );
 }
 
 function AppWrapper({ ywwidget }: AppProps): JSX.Element {
-
   return (
     <ReactFlowProvider>
       <App ywwidget={ywwidget} />
