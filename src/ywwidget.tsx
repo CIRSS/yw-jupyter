@@ -39,7 +39,7 @@ type ReactFlowControllerType = {
 const reactflowController: ReactFlowControllerType = {};
 
 function App({ ywwidget }: AppProps): JSX.Element {
-  const [nodes, setNodes, onNodesChange] = useNodesState(ywwidget.defaultNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(ywwidget.Nodes);
   const [edges, setEdges] = useEdgesState<Edge>([]);
   const { getNode, setCenter } = useReactFlow();
 
@@ -103,7 +103,7 @@ function App({ ywwidget }: AppProps): JSX.Element {
     <ReactFlow
       nodes={nodes}
       edges={edges}
-      defaultNodes={ywwidget.defaultNodes}
+      defaultNodes={ywwidget.Nodes}
       nodeTypes={nodeTypes}
       fitView
       onNodesChange={onNodesChange}
@@ -133,7 +133,7 @@ function AppWrapper({ ywwidget }: AppProps): JSX.Element {
 export class YWWidget extends ReactWidget {
   readonly notebookID: string;
   readonly notebook: NotebookPanel; // cannot be null
-  defaultNodes: CellNode[] = [];
+  Nodes: CellNode[] = [];
   Edges: Edge[] = [];
 
   constructor(notebook: NotebookPanel) {
@@ -159,7 +159,7 @@ export class YWWidget extends ReactWidget {
 
         // prepare code cell for yw-core
         let cellMeta = cell.model.toJSON();
-        this.defaultNodes.push({
+        this.Nodes.push({
           id: `${codeCellIndex}`,
           type: 'cell',
           position: { x: 0, y: 0 },
@@ -220,7 +220,7 @@ export class YWWidget extends ReactWidget {
   focusYWNode(cellIndex: number | undefined) {
     console.log('[YWWidget] focusYWNode: ', cellIndex);
     // find the node with the given ID
-    const node = this.defaultNodes.find(n => n.data.order_index === cellIndex);
+    const node = this.Nodes.find(n => n.data.order_index === cellIndex);
     if (node) {
       console.log('[YWWidget] Found node: ', node);
       reactflowController.focusAndSelectNode?.(node.id);
