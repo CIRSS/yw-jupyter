@@ -2,7 +2,6 @@
 
 A JupyterLab extension for visualizing YesWorkflow.
 
-
 This extension is composed of a Python package named `jupyter_yesworkflow`
 for the server extension and a NPM package named `jupyter-yesworkflow`
 for the frontend extension.
@@ -10,12 +9,14 @@ for the frontend extension.
 ## Install and Requirements
 
 #### Requirements
+
 - `JupyterLab` >= 4.0.0
 - `yw-core` >= 0.1.0, < 1.0.0
 
 #### Install
 
 Install from source code:
+
 ```bash
 git clone https://github.com/cindytsai/jupyter-yesworkflow.git
 cd jupyter-yesworkflow

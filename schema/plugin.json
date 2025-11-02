@@ -10,6 +10,12 @@
         "name": "yesworkflow-toolbars-button",
         "command": "jupyter-yesworkflow:open"
       }
+    ],
+    "Cell": [
+      {
+        "name": "yesworkflow-toolbars-button",
+        "command": "jupyter-yesworkflow:go-to-node"
+      }
     ]
   }
 }

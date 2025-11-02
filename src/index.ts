@@ -43,9 +43,12 @@ function activate(
     namespace: 'yesworkflow'
   });
 
-  // registry yw command
-  const command: string = 'jupyter-yesworkflow:open';
-  app.commands.addCommand(command, {
+  // all yw command
+  const ywCommandOpen: string = 'jupyter-yesworkflow:open';
+  const ywCommandGoToNode: string = 'jupyter-yesworkflow:go-to-node';
+
+  // resgister yw open command
+  app.commands.addCommand(ywCommandOpen, {
     label: 'YesWorkflow: Open',
     caption: 'Open YesWorkflow visualization',
     icon: ywIcon,
@@ -82,6 +85,20 @@ function activate(
       if (!widget.isAttached) {
         app.shell.add(widget, 'main', { mode: 'split-right' });
       }
+    }
+  });
+
+  // register yw go to node command
+  app.commands.addCommand(ywCommandGoToNode, {
+    label: 'YesWorkflow: Go to Node',
+    caption: 'Go to code cell node in YesWorkflow visualization',
+    icon: ywIcon,
+    isVisible: () => notebookTracker.activeCell?.model.type === 'code',
+    execute: () => {
+      const ywWidgetID = 'ywwidget-' + notebookTracker.currentWidget?.id;
+      const ywWidget = ywWidgetTracker.find(widget => widget.id === ywWidgetID);
+      const cellIndex = notebookTracker.currentWidget?.content.activeCellIndex;
+      ywWidget?.content.focusYWNode(cellIndex);
     }
   });
 }
