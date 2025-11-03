@@ -34,6 +34,7 @@ interface AppProps {
 
 type ReactFlowControllerType = {
   focusAndSelectNode?: (nodeID: string) => void;
+  updateCellNodeContent?: (nodeID: string, content: string | string[]) => void;
 };
 
 const reactflowController: ReactFlowControllerType = {};
@@ -93,6 +94,33 @@ function App({ ywwidget }: AppProps): JSX.Element {
     reactflowController.focusAndSelectNode = focusAndSelectNode;
     return () => {
       delete reactflowController.focusAndSelectNode;
+    };
+  }, []);
+
+  // On Node content change
+  const updateCellNodeContent = useCallback(
+    (nodeID: string, content: string | string[]) => {
+      setNodes(nds =>
+        nds.map(node => {
+          if (node.id === nodeID) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                code_block: content
+              }
+            };
+          }
+          return node;
+        })
+      );
+    },
+    [setNodes]
+  );
+  useEffect(() => {
+    reactflowController.updateCellNodeContent = updateCellNodeContent;
+    return () => {
+      delete reactflowController.updateCellNodeContent;
     };
   }, []);
 
@@ -205,10 +233,8 @@ export class YWWidget extends ReactWidget {
     const cells = this.notebook.content.widgets.filter(cell => {
       return cell.model.type === 'code';
     });
-    console.log(
-      `[YWWidget] cell ${cellIndex}`,
-      cells[cellIndex].model.toJSON()
-    );
+    let source = cells[cellIndex].model.toJSON().source;
+    reactflowController.updateCellNodeContent?.(`${cellIndex}`, source);
   }
 
   focusCell(cellIndex: number) {
