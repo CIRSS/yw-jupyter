@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { ChangeEvent, memo } from 'react';
 
 import { BaseNode } from './components/base-node';
 import {
@@ -23,7 +23,14 @@ export interface CellNodeData extends Record<string, unknown> {
 export type CellNode = Node<CellNodeData>;
 
 export const CellNodeWidget = memo(
-  ({ data, selected }: NodeProps<CellNode>) => {
+  ({ id, data, selected }: NodeProps<CellNode>) => {
+    const onContentChange = (env: ChangeEvent<HTMLTextAreaElement>) => {
+      data.code_block = env.target.value;
+      console.log(
+        `[CellNodeWidget] node id: ${id}, content: ${data.code_block}`
+      );
+    };
+
     return (
       <BaseNode selected={selected} className="px-3 py-2">
         <NodeHeader className="-mx-3 -mt-2 border-b">
@@ -39,6 +46,7 @@ export const CellNodeWidget = memo(
             value={data.code_block}
             language="python"
             data-color-mode="light"
+            onChange={onContentChange}
             style={{
               backgroundColor: '#f5f5f5',
               fontFamily:
