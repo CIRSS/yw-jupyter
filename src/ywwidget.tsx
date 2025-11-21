@@ -157,6 +157,7 @@ function AppWrapper({ ywwidget }: AppProps): JSX.Element {
 
 /**
  * A YWWidget that visualizes YesWorkflow data in a ReactFlow graph.
+ * @todo Need to have a clear mapping/definition of cell node and node id.
  */
 export class YWWidget extends ReactWidget {
   readonly notebookID: string;
@@ -196,6 +197,7 @@ export class YWWidget extends ReactWidget {
             exec_count: 0,
             header: `Cell ${index + 1}`,
             code_block: cellMeta.source,
+            code_block_on_change: this.onNodeContentChanged,
             status: 'not-execute'
           }
         });
@@ -235,6 +237,11 @@ export class YWWidget extends ReactWidget {
     });
     let source = cells[cellIndex].model.toJSON().source;
     reactflowController.updateCellNodeContent?.(`${cellIndex}`, source);
+  }
+  
+  onNodeContentChanged(nodeID: string) {
+    const node = this.Nodes.find(n => n.id === nodeID);
+    console.log("[YWWidget] onNodeContentChanged: ", node?.data.code_block);
   }
 
   focusCell(cellIndex: number) {

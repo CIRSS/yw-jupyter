@@ -17,6 +17,7 @@ export interface CellNodeData extends Record<string, unknown> {
   exec_count: number;
   header: string;
   code_block: string | string[];
+  code_block_on_change?: (nodeID: string) => void;
   status: 'not-execute' | 'executing' | 'executed';
 }
 
@@ -26,9 +27,7 @@ export const CellNodeWidget = memo(
   ({ id, data, selected }: NodeProps<CellNode>) => {
     const onContentChange = (env: ChangeEvent<HTMLTextAreaElement>) => {
       data.code_block = env.target.value;
-      console.log(
-        `[CellNodeWidget] node id: ${id}, content: ${data.code_block}`
-      );
+      data.code_block_on_change?.(id);
     };
 
     return (
