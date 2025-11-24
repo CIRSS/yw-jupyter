@@ -2,7 +2,7 @@ import { ReactWidget } from '@jupyterlab/ui-components';
 
 import { CellNode, CellNodeWidget } from './cell-node-widget';
 
-import React, { useCallback, useEffect } from 'react';
+import React, { ChangeEvent, useCallback, useEffect } from 'react';
 import { ToolBar } from './tool-bar';
 import { getLayoutedElements } from './layout';
 
@@ -197,7 +197,9 @@ export class YWWidget extends ReactWidget {
             exec_count: 0,
             header: `Cell ${index + 1}`,
             code_block: cellMeta.source,
-            code_block_on_change: this.onNodeContentChanged,
+            on_content_change: (env: ChangeEvent<HTMLTextAreaElement>) => {
+              this.onNodeContentChanged(`${codeCellIndex}`, env.target.value);
+            },
             status: 'not-execute'
           }
         });
@@ -238,10 +240,20 @@ export class YWWidget extends ReactWidget {
     let source = cells[cellIndex].model.toJSON().source;
     reactflowController.updateCellNodeContent?.(`${cellIndex}`, source);
   }
-  
-  onNodeContentChanged(nodeID: string) {
+
+  onNodeContentChanged(nodeID: string, new_code_block: string | string[]) {
     const node = this.Nodes.find(n => n.id === nodeID);
-    console.log("[YWWidget] onNodeContentChanged: ", node?.data.code_block);
+    if (node) {
+      node.data.code_block = new_code_block;
+      const cellModel = this.notebook.model?.cells.get(node.data.order_index);
+
+      // TODO: not setting new code block correctly
+      if (typeof node.data.code_block === 'string') {
+        cellModel?.sharedModel.setSource(node.data.code_block);
+      } else {
+        cellModel?.sharedModel.setSource(node.data.code_block.join('\n'));
+      }
+    }
   }
 
   focusCell(cellIndex: number) {

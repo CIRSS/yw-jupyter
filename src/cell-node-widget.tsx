@@ -17,19 +17,14 @@ export interface CellNodeData extends Record<string, unknown> {
   exec_count: number;
   header: string;
   code_block: string | string[];
-  code_block_on_change?: (nodeID: string) => void;
+  on_content_change?: (env: ChangeEvent<HTMLTextAreaElement>) => void;
   status: 'not-execute' | 'executing' | 'executed';
 }
 
 export type CellNode = Node<CellNodeData>;
 
 export const CellNodeWidget = memo(
-  ({ id, data, selected }: NodeProps<CellNode>) => {
-    const onContentChange = (env: ChangeEvent<HTMLTextAreaElement>) => {
-      data.code_block = env.target.value;
-      data.code_block_on_change?.(id);
-    };
-
+  ({ data, selected }: NodeProps<CellNode>) => {
     return (
       <BaseNode selected={selected} className="px-3 py-2">
         <NodeHeader className="-mx-3 -mt-2 border-b">
@@ -45,7 +40,7 @@ export const CellNodeWidget = memo(
             value={data.code_block}
             language="python"
             data-color-mode="light"
-            onChange={onContentChange}
+            onChange={data.on_content_change}
             style={{
               backgroundColor: '#f5f5f5',
               fontFamily:
