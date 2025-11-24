@@ -191,7 +191,7 @@ export class YWWidget extends ReactWidget {
         const nodeID = `${codeCellIndex}`;
         const onContentChange = (env: ChangeEvent<HTMLTextAreaElement>) => {
           this.onNodeContentChanged(nodeID, env.target.value);
-        }
+        };
         this.Nodes.push({
           id: nodeID,
           type: 'cell',
@@ -248,8 +248,6 @@ export class YWWidget extends ReactWidget {
     if (node) {
       node.data.code_block = new_code_block;
       const cellModel = this.notebook.model?.cells.get(node.data.order_index);
-
-      // TODO: not setting new code block correctly
       if (typeof node.data.code_block === 'string') {
         cellModel?.sharedModel.setSource(node.data.code_block);
       } else {
