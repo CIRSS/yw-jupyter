@@ -2,7 +2,7 @@ import { ReactWidget } from '@jupyterlab/ui-components';
 
 import { CellNode, CellNodeWidget } from './cell-node-widget';
 
-import React, { useCallback, useEffect } from 'react';
+import React, { ChangeEvent, useCallback, useEffect } from 'react';
 import { ToolBar } from './tool-bar';
 import { getLayoutedElements } from './layout';
 
@@ -21,7 +21,7 @@ import {
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
-import {NotebookActions, NotebookPanel } from '@jupyterlab/notebook';
+import { NotebookActions, NotebookPanel } from '@jupyterlab/notebook';
 import { computeEdges } from './yw-core';
 
 const nodeTypes = {
@@ -34,18 +34,19 @@ interface AppProps {
 
 type ReactFlowControllerType = {
   focusAndSelectNode?: (nodeID: string) => void;
+  updateCellNodeContent?: (nodeID: string, content: string | string[]) => void;
 };
 
 const reactflowController: ReactFlowControllerType = {};
 
 function App({ ywwidget }: AppProps): JSX.Element {
-  const [nodes, setNodes, onNodesChange] = useNodesState(ywwidget.defaultNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(ywwidget.Nodes);
   const [edges, setEdges] = useEdgesState<Edge>([]);
-  const {getNode, setCenter} = useReactFlow();
+  const { getNode, setCenter } = useReactFlow();
 
   // On node double click handler
   const onNodeDoubleClick = (event: React.MouseEvent, node: CellNode) => {
-    console.log("[App] Node double-clicked: ", node);
+    console.log('[App] Node double-clicked: ', node);
     ywwidget.focusCell(node.data.order_index);
   };
 
@@ -80,11 +81,11 @@ function App({ ywwidget }: AppProps): JSX.Element {
         setCenter(
           node.position.x + (node.measured?.width || 0) / 2,
           node.position.y + (node.measured?.height || 0) / 2,
-          {zoom: zoom, duration: 800},
+          { zoom: zoom, duration: 800 }
         );
         // setNodes((nodes) => nodes.map((n) => {...n}))
       } else {
-        return
+        return;
       }
     },
     [getNode, setCenter, setNodes]
@@ -93,7 +94,34 @@ function App({ ywwidget }: AppProps): JSX.Element {
     reactflowController.focusAndSelectNode = focusAndSelectNode;
     return () => {
       delete reactflowController.focusAndSelectNode;
-    }
+    };
+  }, []);
+
+  // On Node content change
+  const updateCellNodeContent = useCallback(
+    (nodeID: string, content: string | string[]) => {
+      setNodes(nds =>
+        nds.map(node => {
+          if (node.id === nodeID) {
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                code_block: content
+              }
+            };
+          }
+          return node;
+        })
+      );
+    },
+    [setNodes]
+  );
+  useEffect(() => {
+    reactflowController.updateCellNodeContent = updateCellNodeContent;
+    return () => {
+      delete reactflowController.updateCellNodeContent;
+    };
   }, []);
 
   // TODO: Calculate the initial layout on mount.
@@ -101,29 +129,25 @@ function App({ ywwidget }: AppProps): JSX.Element {
   // defaultNodes only used for initial rendering
   return (
     <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        defaultNodes={ywwidget.defaultNodes}
-        nodeTypes={nodeTypes}
-        fitView
-        onNodesChange={onNodesChange}
-        onNodeDoubleClick={onNodeDoubleClick}
-      >
-        <Panel>
-          <ToolBar
-            onClickLayout={onLayoutButton}
-            onClickDebug={onDebugButton}
-          />
-        </Panel>
-        <MiniMap pannable zoomable />
-        <Controls />
-        <Background />
-      </ReactFlow>
+      nodes={nodes}
+      edges={edges}
+      defaultNodes={ywwidget.Nodes}
+      nodeTypes={nodeTypes}
+      fitView
+      onNodesChange={onNodesChange}
+      onNodeDoubleClick={onNodeDoubleClick}
+    >
+      <Panel>
+        <ToolBar onClickLayout={onLayoutButton} onClickDebug={onDebugButton} />
+      </Panel>
+      <MiniMap pannable zoomable />
+      <Controls />
+      <Background />
+    </ReactFlow>
   );
 }
 
 function AppWrapper({ ywwidget }: AppProps): JSX.Element {
-
   return (
     <ReactFlowProvider>
       <App ywwidget={ywwidget} />
@@ -133,11 +157,12 @@ function AppWrapper({ ywwidget }: AppProps): JSX.Element {
 
 /**
  * A YWWidget that visualizes YesWorkflow data in a ReactFlow graph.
+ * @todo Need to have a clear mapping/definition of cell node and node id.
  */
 export class YWWidget extends ReactWidget {
   readonly notebookID: string;
   readonly notebook: NotebookPanel; // cannot be null
-  defaultNodes: CellNode[] = [];
+  Nodes: CellNode[] = [];
   Edges: Edge[] = [];
 
   constructor(notebook: NotebookPanel) {
@@ -149,15 +174,26 @@ export class YWWidget extends ReactWidget {
     console.log('Constructing YWWidget with notebook: ', this.notebook);
 
     // initialize default nodes and prepare it to list for yw-core
+    // and register to listen to code cell content changes
     const ywCoreCodeCellList: string[] = [];
     let codeCellIndex = 0;
     this.notebook.content.widgets.forEach((cell, index) => {
       if (cell.model.type !== 'code') {
         return;
       } else {
+        // register content changed listener
+        cell.model.contentChanged.connect(() => {
+          this.onCodeCellContentChanged(index);
+        }, this);
+
+        // prepare code cell for yw-core
         let cellMeta = cell.model.toJSON();
-        this.defaultNodes.push({
-          id: `${codeCellIndex}`,
+        const nodeID = `${codeCellIndex}`;
+        const onContentChange = (env: ChangeEvent<HTMLTextAreaElement>) => {
+          this.onNodeContentChanged(nodeID, env.target.value);
+        }
+        this.Nodes.push({
+          id: nodeID,
           type: 'cell',
           position: { x: 0, y: 0 },
           data: {
@@ -165,6 +201,7 @@ export class YWWidget extends ReactWidget {
             exec_count: 0,
             header: `Cell ${index + 1}`,
             code_block: cellMeta.source,
+            on_content_change: onContentChange,
             status: 'not-execute'
           }
         });
@@ -198,6 +235,29 @@ export class YWWidget extends ReactWidget {
     console.log('[YWWidget] end of constructor');
   }
 
+  onCodeCellContentChanged(cellIndex: number) {
+    const cells = this.notebook.content.widgets.filter(cell => {
+      return cell.model.type === 'code';
+    });
+    let source = cells[cellIndex].model.toJSON().source;
+    reactflowController.updateCellNodeContent?.(`${cellIndex}`, source);
+  }
+
+  onNodeContentChanged(nodeID: string, new_code_block: string | string[]) {
+    const node = this.Nodes.find(n => n.id === nodeID);
+    if (node) {
+      node.data.code_block = new_code_block;
+      const cellModel = this.notebook.model?.cells.get(node.data.order_index);
+
+      // TODO: not setting new code block correctly
+      if (typeof node.data.code_block === 'string') {
+        cellModel?.sharedModel.setSource(node.data.code_block);
+      } else {
+        cellModel?.sharedModel.setSource(node.data.code_block.join('\n'));
+      }
+    }
+  }
+
   focusCell(cellIndex: number) {
     this.notebook.content.activeCellIndex = cellIndex;
     NotebookActions.focusActiveCell(this.notebook.content);
@@ -207,7 +267,7 @@ export class YWWidget extends ReactWidget {
   focusYWNode(cellIndex: number | undefined) {
     console.log('[YWWidget] focusYWNode: ', cellIndex);
     // find the node with the given ID
-    const node = this.defaultNodes.find(n => n.data.order_index === cellIndex);
+    const node = this.Nodes.find(n => n.data.order_index === cellIndex);
     if (node) {
       console.log('[YWWidget] Found node: ', node);
       reactflowController.focusAndSelectNode?.(node.id);
