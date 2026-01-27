@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { AlignVerticalJustifyStart, Bug } from 'lucide-react';
 import { Button } from './components/ui/button';
 import {
@@ -16,14 +16,15 @@ export interface DebugToolBarProps {
 }
 
 export function ToolBar({ onClickLayout }: ToolBarProps): JSX.Element {
+  const handleOnChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    console.log('[ToolBar] Selected value: ', event.target.value);
+  };
   return (
     <div className="flex flex-wrap items-center gap-2 md:flex-row">
       <div>
-        <NativeSelect>
+        <NativeSelect defaultValue="Lower" onChange={handleOnChange}>
           <NativeSelectOptGroup label="Static Analysis">
-            <NativeSelectOption value="Lower">
-              Lower (Default)
-            </NativeSelectOption>
+            <NativeSelectOption value="Lower">Lower</NativeSelectOption>
             <NativeSelectOption value="Upper">Upper</NativeSelectOption>
           </NativeSelectOptGroup>
         </NativeSelect>
