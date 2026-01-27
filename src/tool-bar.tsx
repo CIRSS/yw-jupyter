@@ -9,27 +9,15 @@ import {
 
 export interface ToolBarProps {
   onClickLayout?: () => void;
+}
+
+export interface DebugToolBarProps {
   onClickDebug?: () => void;
 }
 
-export function ToolBar({
-  onClickLayout,
-  onClickDebug
-}: ToolBarProps): JSX.Element {
+export function ToolBar({ onClickLayout }: ToolBarProps): JSX.Element {
   return (
     <div className="flex flex-wrap items-center gap-2 md:flex-row">
-      <div>
-        <Button variant="outline" size="sm" onClick={onClickLayout}>
-          <AlignVerticalJustifyStart />
-          Layout
-        </Button>
-      </div>
-      <div>
-        <Button variant="outline" size="sm" onClick={onClickDebug}>
-          <Bug />
-          Debug
-        </Button>
-      </div>
       <div>
         <NativeSelect>
           <NativeSelectOptGroup label="Static Analysis">
@@ -40,6 +28,23 @@ export function ToolBar({
           </NativeSelectOptGroup>
         </NativeSelect>
       </div>
+      <div>
+        <Button variant="outline" size="sm" onClick={onClickLayout}>
+          <AlignVerticalJustifyStart />
+          Layout
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export function DebugToolBar({ onClickDebug }: DebugToolBarProps): JSX.Element {
+  return (
+    <div>
+      <Button variant="outline" size="sm" onClick={onClickDebug}>
+        <Bug />
+        Debug
+      </Button>
     </div>
   );
 }

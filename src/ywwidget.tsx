@@ -3,7 +3,7 @@ import { ReactWidget } from '@jupyterlab/ui-components';
 import { CellNode, CellNodeWidget } from './cell-node-widget';
 
 import React, { ChangeEvent, useCallback, useEffect } from 'react';
-import { ToolBar } from './tool-bar';
+import { DebugToolBar, ToolBar } from './tool-bar';
 import { getLayoutedElements } from './layout';
 
 import {
@@ -137,8 +137,11 @@ function App({ ywwidget }: AppProps): JSX.Element {
       onNodesChange={onNodesChange}
       onNodeDoubleClick={onNodeDoubleClick}
     >
-      <Panel>
-        <ToolBar onClickLayout={onLayoutButton} onClickDebug={onDebugButton} />
+      <Panel position="top-left">
+        <ToolBar onClickLayout={onLayoutButton} />
+      </Panel>
+      <Panel position="top-right">
+        <DebugToolBar onClickDebug={onDebugButton} />
       </Panel>
       <MiniMap pannable zoomable />
       <Controls />
