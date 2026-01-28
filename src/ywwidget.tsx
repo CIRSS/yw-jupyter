@@ -40,7 +40,8 @@ type ReactFlowControllerType = {
 const reactflowController: ReactFlowControllerType = {};
 
 function App({ ywwidget }: AppProps): JSX.Element {
-  // ywwidget.Nodes and ywwidget.Edges are only for initialization
+  // ywwidget.Nodes are only for initialization
+  // especially edges, it should be internal to the widget
   const [nodes, setNodes, onNodesChange] = useNodesState(ywwidget.Nodes);
   const [edges, setEdges] = useEdgesState<Edge>([]);
   const { getNode, setCenter } = useReactFlow();
@@ -77,20 +78,13 @@ function App({ ywwidget }: AppProps): JSX.Element {
         nodes,
         event.target.value
       ).then(computedEdges => {
-        ywwidget.Edges = [];
-        computedEdges.forEach(edge => {
-          ywwidget.Edges.push({
-            id: edge.id,
-            source: edge.source,
-            target: edge.target,
+        setEdges(
+          computedEdges.map(edge => ({
+            ...edge,
             type: 'default',
-            markerEnd: { type: MarkerType.ArrowClosed }
-          });
-        });
-        getLayoutedElements(nodes, edges).then(obj => {
-          setNodes(obj['nodes']);
-          setEdges(obj['edges']);
-        });
+            markerEnd: MarkerType.ArrowClosed
+          }))
+        );
       });
     }
   };
@@ -208,7 +202,6 @@ export class YWWidget extends ReactWidget {
   readonly notebookID: string;
   readonly notebook: NotebookPanel; // cannot be null
   Nodes: CellNode[] = [];
-  Edges: Edge[] = [];
 
   constructor(notebook: NotebookPanel) {
     super();
