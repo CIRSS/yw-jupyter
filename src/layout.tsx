@@ -1,6 +1,6 @@
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { CellNode } from './cell-node-widget';
-import { Edge, MarkerType } from '@xyflow/react';
+import { Edge } from '@xyflow/react';
 
 const elk = new ELK();
 
