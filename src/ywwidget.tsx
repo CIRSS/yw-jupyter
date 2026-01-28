@@ -40,6 +40,7 @@ type ReactFlowControllerType = {
 const reactflowController: ReactFlowControllerType = {};
 
 function App({ ywwidget }: AppProps): JSX.Element {
+  // ywwidget.Nodes and ywwidget.Edges are only for initialization
   const [nodes, setNodes, onNodesChange] = useNodesState(ywwidget.Nodes);
   const [edges, setEdges] = useEdgesState<Edge>([]);
   const { getNode, setCenter } = useReactFlow();
@@ -50,23 +51,24 @@ function App({ ywwidget }: AppProps): JSX.Element {
     ywwidget.focusCell(node.data.order_index);
   };
 
-  // Update edges when ywwidget.Edges changes
+  // Update edges when ywwidget.Edges changes from outside(?)
   useEffect(() => {
     console.log('[App] useEffect triggered by ywwidget.Edges change');
     setEdges(ywwidget.Edges);
   }, [ywwidget.Edges]);
 
   // Layout (edge compute) selection change handler
+  // TODO: avoid nested then()
   const onLayoutSelectionChange = (event: ChangeEvent<HTMLSelectElement>) => {
     console.log('[ToolBar] Selected value: ', event.target.value);
     if (event.target.value === 'Lower' || event.target.value === 'Upper') {
       computeEdges(
         ywwidget.notebook.sessionContext.session?.kernel,
-        ywwidget.Nodes,
+        nodes,
         event.target.value
-      ).then(edges => {
+      ).then(computedEdges => {
         ywwidget.Edges = [];
-        edges.forEach(edge => {
+        computedEdges.forEach(edge => {
           ywwidget.Edges.push({
             id: edge.id,
             source: edge.source,
@@ -74,6 +76,10 @@ function App({ ywwidget }: AppProps): JSX.Element {
             type: 'default',
             markerEnd: { type: MarkerType.ArrowClosed }
           });
+        });
+        getLayoutedElements(nodes, edges).then(obj => {
+          setNodes(obj['nodes']);
+          setEdges(obj['edges']);
         });
       });
     }
