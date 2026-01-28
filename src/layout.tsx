@@ -25,7 +25,7 @@ export const getLayoutedElements = (nodes: CellNode[], edges: Edge[]) => {
     id: 'root',
     layoutOptions: elkOptions,
     children: nodes.map((node: CellNode) => ({
-      ...node,
+      id: node.id,
       // Adjust the target and source handle positions based on the layout
       // direction.
       targetPosition: 'top',
@@ -45,11 +45,11 @@ export const getLayoutedElements = (nodes: CellNode[], edges: Edge[]) => {
   return elk
     .layout(graph)
     .then(layoutedGraph => ({
-      nodes: layoutedGraph.children?.map(node => ({
-        ...node,
+      nodes: layoutedGraph.children?.map((elkNode, index) => ({
+        ...nodes[index],
         // React Flow expects a position property on the node instead of `x`
         // and `y` fields.
-        position: { x: node.x, y: node.y }
+        position: { x: elkNode.x, y: elkNode.y }
       }))
     }))
     .catch(console.error);
