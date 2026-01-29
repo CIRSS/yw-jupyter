@@ -3,7 +3,7 @@ import { ReactWidget } from '@jupyterlab/ui-components';
 import { CellNode, CellNodeWidget } from './cell-node-widget';
 
 import React, { ChangeEvent, useCallback, useEffect } from 'react';
-import { DebugToolBar, ToolBar } from './tool-bar';
+import { ToolBar } from './tool-bar';
 import { getLayoutedElements } from './layout';
 
 import {
@@ -113,10 +113,10 @@ function App({ ywwidget }: IAppProps): JSX.Element {
   }, [nodes, edges]);
 
   // Debug button handler
-  const onDebugButton = () => {
-    console.log('[Debug] Nodes: ', nodes);
-    console.log('[Debug] Edges: ', edges);
-  };
+  // const onDebugButton = () => {
+  //   console.log('[Debug] Nodes: ', nodes);
+  //   console.log('[Debug] Edges: ', edges);
+  // };
 
   // focus and select node and expose the function
   const focusAndSelectNode = useCallback(
@@ -189,9 +189,9 @@ function App({ ywwidget }: IAppProps): JSX.Element {
           onClickLayout={onLayoutButton}
         />
       </Panel>
-      <Panel position="top-right">
-        <DebugToolBar onClickDebug={onDebugButton} />
-      </Panel>
+      {/*<Panel position="top-right">*/}
+      {/*  <DebugToolBar onClickDebug={onDebugButton} />*/}
+      {/*</Panel>*/}
       <MiniMap pannable zoomable />
       <Controls />
       <Background />
