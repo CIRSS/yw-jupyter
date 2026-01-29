@@ -72,6 +72,7 @@ export async function computeEdges(
   // Load input cells to Python
   let py_cell_list = '';
   for (let index = 0; index < input_cells.length; index++) {
+    // Read code block
     let code_content: string = '';
     const code_block = input_cells[index].data.code_block;
     if (typeof code_block === 'string') {
@@ -79,6 +80,10 @@ export async function computeEdges(
     } else {
       code_content = code_block.join('\n');
     }
+    // Replace quotes with \quotes
+    code_content = code_content.replace(/"/g, '\\"');
+    code_content = code_content.replace(/'/g, "\\'");
+    // Load values to Python
     const py_cell = `cell_${index} = """${code_content}"""\n`;
     py_cell_list += `cell_${index},`;
     await kernel.requestExecute({
