@@ -55,8 +55,12 @@ function App({ ywwidget }: AppProps): JSX.Element {
   // Compute the edges on first launch
   useEffect(() => {
     console.log('[App] Compute edges on first launch');
-    computeEdges(ywwidget.notebook.sessionContext.session?.kernel, nodes).then(
-      computedEdges => {
+    (async () => {
+      try {
+        const computedEdges = await computeEdges(
+          ywwidget.notebook.sessionContext.session?.kernel,
+          nodes
+        );
         setEdges(
           computedEdges.map(edge => ({
             ...edge,
@@ -64,35 +68,38 @@ function App({ ywwidget }: AppProps): JSX.Element {
             markerEnd: MarkerType.ArrowClosed
           }))
         );
-        getLayoutedElements(nodes, computedEdges).then(obj => {
-          setNodes(obj['nodes']);
-        });
+        const obj = await getLayoutedElements(nodes, computedEdges);
+        setNodes(obj['nodes']);
+      } catch (err) {
+        console.error('[App] Failed to compute edges or layout', err);
       }
-    );
+    })();
   }, []);
 
   // Layout (edge compute) selection change handler
-  // TODO: avoid nested then()
   const onLayoutSelectionChange = (event: ChangeEvent<HTMLSelectElement>) => {
     console.log('[ToolBar] Selected value: ', event.target.value);
-    if (event.target.value === 'Lower' || event.target.value === 'Upper') {
-      computeEdges(
-        ywwidget.notebook.sessionContext.session?.kernel,
-        nodes,
-        event.target.value
-      ).then(computedEdges => {
-        setEdges(
-          computedEdges.map(edge => ({
-            ...edge,
-            type: 'default',
-            markerEnd: MarkerType.ArrowClosed
-          }))
-        );
-
-        getLayoutedElements(nodes, computedEdges).then(obj => {
+    {
+      (async () => {
+        try {
+          const computedEdges = await computeEdges(
+            ywwidget.notebook.sessionContext.session?.kernel,
+            nodes,
+            event.target.value
+          );
+          setEdges(
+            computedEdges.map(edge => ({
+              ...edge,
+              type: 'default',
+              markerEnd: MarkerType.ArrowClosed
+            }))
+          );
+          const obj = await getLayoutedElements(nodes, computedEdges);
           setNodes(obj['nodes']);
-        });
-      });
+        } catch (err) {
+          console.error('[App] Failed to compute edges or layout', err);
+        }
+      })();
     }
   };
 

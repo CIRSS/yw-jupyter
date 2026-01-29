@@ -58,7 +58,7 @@ def parse_yw_core(yw_records: list):
 export async function computeEdges(
   kernel: Kernel.IKernelConnection | undefined | null,
   input_cells: CellNode[],
-  yw_core_estimate: 'Upper' | 'Lower' = 'Lower'
+  yw_core_estimate: string = 'Lower'
 ): Promise<YWEdge[]> {
   if (!kernel) {
     Notification.error(
