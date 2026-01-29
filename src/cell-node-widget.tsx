@@ -3,11 +3,11 @@ import React, { ChangeEvent, memo } from 'react';
 import { BaseNode } from './components/base-node';
 import {
   NodeHeader,
-  NodeHeaderTitle,
-  NodeHeaderActions,
-  NodeHeaderDiveInAction,
-  NodeHeaderRunAction,
-  NodeHeaderDeleteAction
+  NodeHeaderTitle
+  // NodeHeaderActions,
+  // NodeHeaderDiveInAction,
+  // NodeHeaderRunAction,
+  // NodeHeaderDeleteAction
 } from './components/node-header';
 import CodeEditor from '@uiw/react-textarea-code-editor';
 import { Handle, Node, NodeProps, Position } from '@xyflow/react';
@@ -29,11 +29,11 @@ export const CellNodeWidget = memo(
       <BaseNode selected={selected} className="px-3 py-2">
         <NodeHeader className="-mx-3 -mt-2 border-b">
           <NodeHeaderTitle>{data.header}</NodeHeaderTitle>
-          <NodeHeaderActions>
-            <NodeHeaderDiveInAction />
-            <NodeHeaderRunAction />
-            <NodeHeaderDeleteAction />
-          </NodeHeaderActions>
+          {/*<NodeHeaderActions>*/}
+          {/*  <NodeHeaderDiveInAction />*/}
+          {/*  <NodeHeaderRunAction />*/}
+          {/*  <NodeHeaderDeleteAction />*/}
+          {/*</NodeHeaderActions>*/}
         </NodeHeader>
         <div className="mt-2">
           <CodeEditor
