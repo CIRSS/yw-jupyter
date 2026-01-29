@@ -125,7 +125,11 @@
         "node_modules",
         "dist",
         "coverage",
-        "**/*.d.ts"
+        "**/*.d.ts",
+        "src/components/ui/*",
+        "src/lib/*",
+        "style/tailwind.css",
+        "style/tailwind_converted.css"
     ],
     "eslintConfig": {
         "extends": [
