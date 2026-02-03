@@ -9,8 +9,6 @@ import { INotebookTracker, NotebookPanel } from '@jupyterlab/notebook';
 
 import { LabIcon } from '@jupyterlab/ui-components';
 
-import { requestAPI } from './handler';
-
 import { YWWidget } from './ywwidget';
 
 import yesworkflowSvgStr from '../style/icons/yesworkflow.svg';
@@ -19,19 +17,6 @@ function activate(
   app: JupyterFrontEnd,
   notebookTracker: INotebookTracker
 ): void {
-  // Dev: make sure our extension and server are working
-  console.log('JupyterLab extension jupyter-yesworkflow is activated!');
-
-  requestAPI<any>('get-example')
-    .then(data => {
-      console.log(data);
-    })
-    .catch(reason => {
-      console.error(
-        `The jupyter_yesworkflow server extension appears to be missing.\n${reason}`
-      );
-    });
-
   // create icon for YesWorkflow
   const ywIcon = new LabIcon({
     name: 'jupyter-yw-workflow:icon',
