@@ -14,7 +14,7 @@
     "license": "BSD-3-Clause",
     "author": {
         "name": "Shin-Rong Tsai, Timothy McPhillips, Meng Li",
-        "email": "turquoisea.tsai@gmail.com, tmcphill@illinois.edu, meng26@illinois.edu"
+        "email": "turquoisea.tsai@gmail.com"
     },
     "files": [
         "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
@@ -111,7 +111,7 @@
     },
     "jupyterlab": {
         "extension": true,
-        "outputDir": "jupyter_yesworkflow/labextension",
+        "outputDir": "yw-jupyter/labextension",
         "schemaDir": "schema"
     },
     "eslintIgnore": [
