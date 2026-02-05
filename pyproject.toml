@@ -36,24 +36,24 @@ source = "nodejs"
 fields = ["description", "authors", "urls", "keywords"]
 
 [tool.hatch.build.targets.sdist]
-artifacts = ["yw-jupyter/labextension"]
+artifacts = ["yw_jupyter/labextension"]
 exclude = [".github", "binder"]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"yw-jupyter/labextension" = "share/jupyter/labextensions/yw-jupyter"
+"yw_jupyter/labextension" = "share/jupyter/labextensions/yw-jupyter"
 "install.json" = "share/jupyter/labextensions/yw-jupyter/install.json"
 
 [tool.hatch.build.hooks.version]
-path = "yw-jupyter/_version.py"
+path = "yw_jupyter/_version.py"
 
 [tool.hatch.build.hooks.jupyter-builder]
 dependencies = ["hatch-jupyter-builder>=0.5"]
 build-function = "hatch_jupyter_builder.npm_builder"
 ensured-targets = [
-    "yw-jupyter/labextension/static/style.js",
-    "yw-jupyter/labextension/package.json",
+    "yw_jupyter/labextension/static/style.js",
+    "yw_jupyter/labextension/package.json",
 ]
-skip-if-exists = ["yw-jupyter/labextension/static/style.js"]
+skip-if-exists = ["yw_jupyter/labextension/static/style.js"]
 
 [tool.hatch.build.hooks.jupyter-builder.build-kwargs]
 build_cmd = "build:prod"
@@ -63,7 +63,7 @@ npm = ["jlpm"]
 build_cmd = "install:extension"
 npm = ["jlpm"]
 source_dir = "src"
-build_dir = "yw-jupyter/labextension"
+build_dir = "yw_jupyter/labextension"
 
 [tool.jupyter-releaser.options]
 version_cmd = "hatch version"

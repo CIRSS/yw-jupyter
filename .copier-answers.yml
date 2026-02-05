@@ -10,7 +10,7 @@ kind: frontend
 labextension_name: yw-jupyter
 project_short_description: A JupyterLab extension for visualizing notebook cells using
     YesWorkflow.
-python_name: yw-jupyter
+python_name: yw_jupyter
 repository: https://github.com/CIRSS/yw-jupyter.git
 test: false
 
