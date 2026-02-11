@@ -1,5 +1,8 @@
 # yw-jupyter
 
+![PyPI - Version](https://img.shields.io/pypi/v/yw-jupyter?style=for-the-badge)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/CIRSS/yw-jupyter/build.yml?branch=main&style=for-the-badge)
+
 A JupyterLab extension build upon ReactFlow for visualizing notebook cells using YesWorkflow.
 
 - The extension adds a "YesWorkflow" tab to the JupyterLab sidebar and cell toolbar.
