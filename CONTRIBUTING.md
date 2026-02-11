@@ -53,5 +53,6 @@ folder is located. Then you can remove the symlink named `yw-jupyter` within tha
 # Making a Release
 
 Checklist:
+
 - [ ] Update `CHANGELOG.md` with the new version and changes.
 - [ ] Update the version number `package.json`.
